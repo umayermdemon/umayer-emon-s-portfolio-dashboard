@@ -45,7 +45,6 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
@@ -68,7 +67,7 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
+  --sidebar: #0f172a;
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -119,4 +118,31 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+.background-pattern {
+  background-color: #0f172a;
+  background-image: linear-gradient(
+      90deg,
+      transparent 24%,
+      #1c2c5066 25%,
+      #1c2c5066 26%,
+      transparent 27%,
+      transparent 74%,
+      #1c2c5066 75%,
+      #1c2c5066 76%,
+      transparent 77%
+    ),
+    linear-gradient(
+      0deg,
+      transparent 24%,
+      #1c2c5066 25%,
+      #1c2c5066 26%,
+      transparent 27%,
+      transparent 74%,
+      #1c2c5066 75%,
+      #1c2c5066 76%,
+      transparent 77%
+    );
+  background-size: 30px 30px;
+  animation: square-move 10s infinite linear;
 }
