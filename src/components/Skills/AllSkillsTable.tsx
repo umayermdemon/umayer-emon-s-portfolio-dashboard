@@ -1,34 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { IProject } from "@/types";
+import { ISkill } from "@/types";
 import { Edit, Trash } from "lucide-react";
 import Image from "next/image";
 import { PTable } from "../shared/PTable";
 import { ColumnDef } from "@tanstack/react-table";
-import { deleteProject } from "@/services/projects";
 import { useState } from "react";
 import { toast } from "sonner";
 import DeleteConfirmationModal from "../shared/deleteConfirmationModal";
+import { deleteSkill } from "@/services/skills";
 
-const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
+const AllSkillsTable = ({ skills }: { skills: ISkill[] }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  const handleDelete = (data: IProject) => {
+  const handleDelete = (data: ISkill) => {
     setSelectedId(data._id);
-    setSelectedItem(data.title);
+    setSelectedItem(data.skillName);
     setModalOpen(true);
   };
   const handleDeleteConfirm = async () => {
     try {
       if (selectedId) {
-        const res = await deleteProject(selectedId);
-        if (res.success) {
-          toast.success(res.message);
+        const res = await deleteSkill(selectedId);
+        if (res?.success) {
+          toast.success(res?.message);
           setModalOpen(false);
         } else {
-          toast.error(res.message);
+          toast.error(res?.message);
         }
       }
     } catch (err: any) {
@@ -36,38 +36,37 @@ const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
     }
   };
 
-  const columns: ColumnDef<IProject>[] = [
+  const columns: ColumnDef<ISkill>[] = [
     {
-      accessorKey: "title",
-      header: () => <div>Project Name</div>,
+      accessorKey: "skillName",
+      header: () => <div>Skill Name</div>,
       cell: ({ row }) => (
         <div className="flex items-center space-x-3">
           <Image
-            src={row.original.images[0]}
-            alt={row.original.title}
+            src={row.original.logo}
+            alt={row.original.skillName}
             width={40}
             height={40}
             className="w-8 h-8 rounded-full"
           />
-          <span className="truncate">{row.original.title}</span>
+          <span className="truncate">{row.original.skillName}</span>
         </div>
       ),
     },
     {
-      accessorKey: "liveLinks",
-      header: () => <div>Live Links</div>,
+      accessorKey: "isDeleted",
+      header: () => <div>Deleted</div>,
       cell: ({ row }) => (
-        <div className="flex flex-wrap gap-2">
-          <a
-            href={row.original.liveLinks}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs">
-            Visit
-          </a>
+        <div>
+          {row.original.isDeleted ? (
+            <span className="text-red-500">Yes</span>
+          ) : (
+            <span className="text-green-500">No</span>
+          )}
         </div>
       ),
     },
+
     {
       accessorKey: "createdAt",
       header: () => <div>Created At</div>,
@@ -89,7 +88,7 @@ const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
       cell: ({ row }) => (
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => alert("Edit project")}
+            onClick={() => alert("Edit skill")}
             className="text-blue-500 hover:text-blue-700 cursor-pointer">
             <Edit size={20} />
           </button>
@@ -105,7 +104,7 @@ const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
 
   return (
     <div className="w-full bg-gray-300 rounded-md shadow-md p-4">
-      <PTable columns={columns} data={projects} />
+      <PTable columns={columns} data={skills} />
       <DeleteConfirmationModal
         name={selectedItem}
         onConfirm={handleDeleteConfirm}
@@ -116,4 +115,4 @@ const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
   );
 };
 
-export default AllProjectsTable;
+export default AllSkillsTable;

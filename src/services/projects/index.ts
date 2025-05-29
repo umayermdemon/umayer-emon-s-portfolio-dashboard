@@ -1,7 +1,8 @@
 "use server";
 
-import { IProject } from "@/types";
 import { revalidateTag } from "next/cache";
+import { cookies } from "next/headers";
+import { FieldValues } from "react-hook-form";
 
 export const getAllProjects = async () => {
   try {
@@ -16,15 +17,31 @@ export const getAllProjects = async () => {
   }
 };
 
-export const createProject = async (projectData: IProject) => {
+export const getProjectById = async (projectId: string) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(projectData),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}`
+    );
+
+    return res.json();
+  } catch (error) {
+    throw new Error(`Error fetching project: ${error}`);
+  }
+};
+
+export const createProject = async (projectData: FieldValues) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/projects/create-project`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: (await cookies()).get("accessToken")!.value,
+        },
+        body: JSON.stringify(projectData),
+      }
+    );
 
     revalidateTag("projects");
 
@@ -36,7 +53,7 @@ export const createProject = async (projectData: IProject) => {
 
 export const updateProject = async (
   projectId: string,
-  projectData: IProject
+  projectData: FieldValues
 ) => {
   try {
     const res = await fetch(
@@ -45,6 +62,7 @@ export const updateProject = async (
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: (await cookies()).get("accessToken")!.value,
         },
         body: JSON.stringify(projectData),
       }
@@ -65,7 +83,7 @@ export const deleteProject = async (projectId: string) => {
       {
         method: "DELETE",
         headers: {
-          "Content-Type": "application/json",
+          Authorization: (await cookies()).get("accessToken")!.value,
         },
       }
     );

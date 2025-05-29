@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
@@ -5,13 +6,7 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
 import {
@@ -23,34 +18,29 @@ import {
   FormMessage,
 } from "../ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateProjectValidationSchema } from "./CreateProjectValidationSchema";
+import { CreateBlogValidationSchema } from "./CreateBlogValidationSchema";
 import ImageUploader from "../ui/core/ImageUploader";
 import ImagePreviewer from "../ui/core/ImageUploader/ImagePreviewer";
-import { uploadImageToCloudinary } from "../shared/uploadImageToCloudinary";
 import { z } from "zod";
+import { uploadImageToCloudinary } from "../shared/uploadImageToCloudinary";
+import { createBlog } from "@/services/blogs";
 import { toast } from "sonner";
-import { createProject } from "@/services/projects";
-
-type FormSchema = z.infer<typeof CreateProjectValidationSchema>;
-
-export default function CreateProjectPage() {
+type FormSchema = z.infer<typeof CreateBlogValidationSchema>;
+export default function CreateBlogPage() {
+  const [tagsInput, setTagsInput] = useState("");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string[]>([]);
-  const [frontendInput, setFrontendInput] = useState("");
-  const [backendInput, setBackendInput] = useState("");
   const form = useForm<FormSchema>({
-    resolver: zodResolver(CreateProjectValidationSchema),
+    resolver: zodResolver(CreateBlogValidationSchema),
     defaultValues: {
       title: "",
-      liveLinks: "",
-      clientRepo: "",
-      serverRepo: "",
-      duration: "",
-      demoVideo: "",
+      slug: "",
+      content: "",
+      summary: "",
+      tags: [],
       description: "",
       featured: false,
-      frontendTechnologies: [],
-      backendTechnologies: [],
+      published: false,
     },
   });
   const {
@@ -60,31 +50,30 @@ export default function CreateProjectPage() {
 
   const onSubmit: SubmitHandler<FormSchema> = async (data) => {
     try {
-      if (imageFiles.length === 0 || imageFiles.length > 4) {
-        toast.error("Please upload between 1 and 4 images.");
+      const imageUrls = await uploadImageToCloudinary(imageFiles[0]);
+      const blogData = {
+        ...data,
+        author: "Umayer Emon",
+        coverImage: imageUrls,
+      };
+      if (!imageFiles.length) {
+        toast.error("Please upload a cover image.");
         return;
       } else {
-        const uploadImages = await Promise.all(
-          Array.from(imageFiles).map((file) => uploadImageToCloudinary(file))
-        );
-        const projectData = {
-          ...data,
-          images: uploadImages,
-        };
-        const res = await createProject(projectData);
+        const res = await createBlog(blogData);
+
         if (res?.success) {
-          toast.success(res?.message);
           reset();
-          setFrontendInput("");
-          setBackendInput("");
           setImageFiles([]);
           setImagePreview([]);
+          setTagsInput("");
+          toast.success(res?.message);
         } else {
           toast.error(res?.message);
         }
       }
-    } catch (error) {
-      console.error("Error submitting project:", error);
+    } catch (error: any) {
+      toast.error(error?.message);
     }
   };
 
@@ -95,7 +84,7 @@ export default function CreateProjectPage() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="container mx-auto p-8 space-y-6 bg-[#112240] rounded-xl shadow-lg border border-[#233554]">
           <h1 className="text-3xl font-bold text-center text-[#00BFFF] mb-4">
-            Create Project
+            Create Blog
           </h1>
 
           <div className="flex flex-col md:flex-row gap-4">
@@ -123,11 +112,11 @@ export default function CreateProjectPage() {
             <div className="flex-1">
               <FormField
                 control={form.control}
-                name="liveLinks"
+                name="slug"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="font-bold text-[#00BFFF]">
-                      Live Links
+                      Slug
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -146,11 +135,11 @@ export default function CreateProjectPage() {
             <div className="flex-1">
               <FormField
                 control={form.control}
-                name="clientRepo"
+                name="content"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="font-bold text-[#00BFFF]">
-                      Client Repo
+                      Content
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -167,11 +156,11 @@ export default function CreateProjectPage() {
             <div className="flex-1">
               <FormField
                 control={form.control}
-                name="serverRepo"
+                name="summary"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="font-bold text-[#00BFFF]">
-                      Server Repo
+                      Summary
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -191,62 +180,18 @@ export default function CreateProjectPage() {
             <div className="flex-1">
               <FormField
                 control={form.control}
-                name="duration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold text-[#00BFFF]">
-                      Project Duration
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value || ""}
-                        className="bg-[#0A192F] rounded-xl text-white border-[#233554] focus:border-[#00BFFF] focus:ring-[#00BFFF]"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex-1">
-              <FormField
-                control={form.control}
-                name="demoVideo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold text-[#00BFFF]">
-                      Demo Video URL
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value || ""}
-                        className="bg-[#0A192F] rounded-xl text-white border-[#233554] focus:border-[#00BFFF] focus:ring-[#00BFFF]"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <FormField
-                control={form.control}
-                name="frontendTechnologies"
+                name="tags"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-[#00BFFF]">
-                      Frontend Technologies (comma separated)
+                      Tags (comma separated)
                     </FormLabel>
                     <FormControl>
                       <Input
                         className="mt-1 bg-[#0A192F] text-white border-[#233554] focus:border-[#00BFFF] focus:ring-[#00BFFF]"
-                        value={frontendInput}
+                        value={tagsInput}
                         onChange={(e) => {
-                          setFrontendInput(e.target.value);
+                          setTagsInput(e.target.value);
                           // Optionally update form value live as user types
                           const techs = e.target.value
                             .split(",")
@@ -255,7 +200,7 @@ export default function CreateProjectPage() {
                           field.onChange(techs);
                         }}
                         onBlur={() => {
-                          const techs = frontendInput
+                          const techs = tagsInput
                             .split(",")
                             .map((t) => t.trim())
                             .filter(Boolean);
@@ -268,35 +213,20 @@ export default function CreateProjectPage() {
                 )}
               />
             </div>
-
             <div className="flex-1">
               <FormField
                 control={form.control}
-                name="backendTechnologies"
+                name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#00BFFF]">
-                      Backend Technologies (comma separated)
+                    <FormLabel className="font-bold text-[#00BFFF]">
+                      Category
                     </FormLabel>
                     <FormControl>
                       <Input
-                        className="mt-1 bg-[#0A192F] text-white border-[#233554] focus:border-[#00BFFF] focus:ring-[#00BFFF]"
-                        value={backendInput}
-                        onChange={(e) => {
-                          setBackendInput(e.target.value);
-                          const techs = e.target.value
-                            .split(",")
-                            .map((t) => t.trim())
-                            .filter(Boolean);
-                          field.onChange(techs);
-                        }}
-                        onBlur={() => {
-                          const techs = backendInput
-                            .split(",")
-                            .map((t) => t.trim())
-                            .filter(Boolean);
-                          field.onChange(techs);
-                        }}
+                        {...field}
+                        value={field.value || ""}
+                        className="bg-[#0A192F] rounded-xl text-white border-[#233554] focus:border-[#00BFFF] focus:ring-[#00BFFF]"
                       />
                     </FormControl>
                     <FormMessage />
@@ -328,7 +258,7 @@ export default function CreateProjectPage() {
           </div>
           <div className="flex flex-col items-center md:flex-row md:justify-between gap-4">
             <div className="flex flex-row gap-4 items-center">
-              {imageFiles.length >= 4 ? (
+              {imageFiles.length === 1 ? (
                 <ImagePreviewer
                   imagePreview={imagePreview.slice(0, 4)}
                   setImageFiles={setImageFiles}
@@ -340,37 +270,12 @@ export default function CreateProjectPage() {
                   <ImageUploader
                     setImageFiles={setImageFiles}
                     setImagePreview={setImagePreview}
-                    label="Upload Project Images (max 4)"
-                  />
-                  <ImagePreviewer
-                    imagePreview={imagePreview}
-                    setImageFiles={setImageFiles}
-                    setImagePreview={setImagePreview}
-                    className="flex flex-row gap-4 items-center"
+                    label="Upload Blog Image (max 1)"
                   />
                 </>
               )}
             </div>
             <div className="flex flex-col items-center md:flex-row gap-4">
-              <div>
-                <Label className="text-[#00BFFF]">Status</Label>
-                <Controller
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="border-[#233554] bg-[#0A192F] text-white focus:border-[#00BFFF] focus:ring-[#00BFFF]">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#112240] text-white">
-                        <SelectItem value="planned">Planned</SelectItem>
-                        <SelectItem value="in-progress">In Progress</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </div>
               <div className="flex items-center space-x-2">
                 <Controller
                   control={form.control}
@@ -385,31 +290,27 @@ export default function CreateProjectPage() {
                 />
                 <Label className="text-[#00BFFF]">Featured</Label>
               </div>
+              <div className="flex items-center space-x-2">
+                <Controller
+                  control={form.control}
+                  name="published"
+                  render={({ field }) => (
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className="accent-[#00BFFF] bg-[#0A192F] border-[#233554]"
+                    />
+                  )}
+                />
+                <Label className="text-[#00BFFF]">Published</Label>
+              </div>
             </div>
           </div>
-
-          {/* <div>
-            <Label className="text-[#00BFFF]">
-              Team Members (comma separated)
-            </Label>
-            <Input
-              className="mt-1 bg-[#0A192F] text-white border-[#233554] focus:border-[#00BFFF] focus:ring-[#00BFFF]"
-              value={teamInput}
-              onChange={(e) => setTeamInput(e.target.value)}
-              onBlur={() => {
-                const members = teamInput
-                  .split(",")
-                  .map((t) => t.trim())
-                  .filter(Boolean);
-                form.setValue("teamMembers", members);
-              }}
-            />
-          </div> */}
 
           <Button
             type="submit"
             className="w-full bg-[#00BFFF] hover:bg-blue-600 text-white font-semibold py-2 rounded transition cursor-pointer">
-            {isSubmitting ? "Creating..." : "Create Project"}
+            {isSubmitting ? "Creating..." : "Create Blog"}
           </Button>
         </form>
       </Form>

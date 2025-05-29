@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { logoutUser } from "@/services/auth";
 type MenuItem = {
   title: string;
   url: string;
@@ -28,6 +29,14 @@ type MenuData = {
 
 export function NavMain({ items }: { items: MenuData }) {
   const pathName = usePathname();
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      window.location.reload();
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   return (
     <SidebarGroup>
@@ -139,6 +148,7 @@ export function NavMain({ items }: { items: MenuData }) {
         <SidebarMenuItem>
           <SidebarMenuButton
             tooltip="Logout"
+            onClick={handleLogout}
             className="px-6 rounded-2xl text-white hover:bg-[#00BFFF] hover:text-black cursor-pointer font-semibold text-[1rem]">
             <LogOut />
             Log out

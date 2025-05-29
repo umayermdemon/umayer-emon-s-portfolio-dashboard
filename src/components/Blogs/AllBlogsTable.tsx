@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { IProject } from "@/types";
+import { IBlog } from "@/types";
 import { Edit, Trash } from "lucide-react";
 import Image from "next/image";
 import { PTable } from "../shared/PTable";
 import { ColumnDef } from "@tanstack/react-table";
-import { deleteProject } from "@/services/projects";
 import { useState } from "react";
 import { toast } from "sonner";
 import DeleteConfirmationModal from "../shared/deleteConfirmationModal";
+import { deleteBlog } from "@/services/blogs";
 
-const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
+const AllBlogsTable = ({ blogs }: { blogs: IBlog[] }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  const handleDelete = (data: IProject) => {
+  const handleDelete = (data: IBlog) => {
     setSelectedId(data._id);
     setSelectedItem(data.title);
     setModalOpen(true);
@@ -23,12 +23,12 @@ const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
   const handleDeleteConfirm = async () => {
     try {
       if (selectedId) {
-        const res = await deleteProject(selectedId);
-        if (res.success) {
-          toast.success(res.message);
+        const res = await deleteBlog(selectedId);
+        if (res?.success) {
+          toast.success(res?.message);
           setModalOpen(false);
         } else {
-          toast.error(res.message);
+          toast.error(res?.message);
         }
       }
     } catch (err: any) {
@@ -36,14 +36,14 @@ const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
     }
   };
 
-  const columns: ColumnDef<IProject>[] = [
+  const columns: ColumnDef<IBlog>[] = [
     {
       accessorKey: "title",
-      header: () => <div>Project Name</div>,
+      header: () => <div>Blog Title</div>,
       cell: ({ row }) => (
         <div className="flex items-center space-x-3">
           <Image
-            src={row.original.images[0]}
+            src={row.original.coverImage}
             alt={row.original.title}
             width={40}
             height={40}
@@ -54,18 +54,64 @@ const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
       ),
     },
     {
-      accessorKey: "liveLinks",
-      header: () => <div>Live Links</div>,
+      accessorKey: "author",
+      header: () => <div>Author</div>,
+      cell: ({ row }) => <div>{row.original.author}</div>,
+    },
+    {
+      accessorKey: "category",
+      header: () => <div>Category</div>,
+      cell: ({ row }) => <div>{row.original.category}</div>,
+    },
+    {
+      accessorKey: "views",
+      header: () => <div>Views</div>,
+      cell: ({ row }) => <div>{row.original.views}</div>,
+    },
+    {
+      accessorKey: "featured",
+      header: () => <div>Featured</div>,
       cell: ({ row }) => (
-        <div className="flex flex-wrap gap-2">
-          <a
-            href={row.original.liveLinks}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs">
-            Visit
-          </a>
-        </div>
+        <input
+          type="checkbox"
+          checked={row.original.featured}
+          readOnly
+          className="cursor-not-allowed"
+        />
+      ),
+    },
+    {
+      accessorKey: "isDeleted",
+      header: () => <div>Deleted</div>,
+      cell: ({ row }) => (
+        <input
+          type="checkbox"
+          checked={row.original.isDeleted}
+          readOnly
+          className="cursor-not-allowed"
+        />
+      ),
+    },
+    {
+      accessorKey: "likes",
+      header: () => <div>Likes</div>,
+      cell: ({ row }) => <div>{row.original.likes}</div>,
+    },
+    {
+      accessorKey: "commentsCount",
+      header: () => <div>Comments</div>,
+      cell: ({ row }) => <div>{row.original.commentsCount}</div>,
+    },
+    {
+      accessorKey: "published",
+      header: () => <div>Published</div>,
+      cell: ({ row }) => (
+        <input
+          type="checkbox"
+          checked={row.original.published}
+          readOnly
+          className="cursor-not-allowed"
+        />
       ),
     },
     {
@@ -89,7 +135,7 @@ const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
       cell: ({ row }) => (
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => alert("Edit project")}
+            onClick={() => alert("Edit blog")}
             className="text-blue-500 hover:text-blue-700 cursor-pointer">
             <Edit size={20} />
           </button>
@@ -105,7 +151,7 @@ const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
 
   return (
     <div className="w-full bg-gray-300 rounded-md shadow-md p-4">
-      <PTable columns={columns} data={projects} />
+      <PTable columns={columns} data={blogs} />
       <DeleteConfirmationModal
         name={selectedItem}
         onConfirm={handleDeleteConfirm}
@@ -116,4 +162,4 @@ const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
   );
 };
 
-export default AllProjectsTable;
+export default AllBlogsTable;

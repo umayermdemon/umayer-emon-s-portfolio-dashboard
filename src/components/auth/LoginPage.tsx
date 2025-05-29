@@ -25,8 +25,8 @@ const LoginPage = () => {
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     const res = await loginUser(data);
     if (res?.success) {
-      toast.success(res?.message);
       router.push(redirect || "/");
+      toast.success(res?.message);
     } else {
       toast.error(res?.message);
     }

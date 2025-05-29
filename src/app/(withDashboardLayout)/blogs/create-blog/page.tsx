@@ -1,7 +1,9 @@
+import CreateBlogPage from "@/components/Blogs/CreateBlog";
+
 const CreateBlog = () => {
   return (
-    <div>
-      <h1>This is CreateBlog component</h1>
+    <div className="w-full">
+      <CreateBlogPage />
     </div>
   );
 };

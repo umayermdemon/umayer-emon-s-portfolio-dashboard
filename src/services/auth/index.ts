@@ -34,3 +34,11 @@ export const getCurrentUser = async () => {
     return null;
   }
 };
+
+export const logoutUser = async () => {
+  try {
+    (await cookies()).delete("accessToken");
+  } catch (error) {
+    console.error("Error logging out:", error);
+  }
+};

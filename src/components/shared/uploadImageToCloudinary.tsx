@@ -1,7 +1,7 @@
-export const uploadToCloudinary = async (file: File, preset: string) => {
+export const uploadImageToCloudinary = async (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("upload_preset", preset);
+  formData.append("upload_preset", "ml_default");
 
   try {
     const response = await fetch(
@@ -11,10 +11,6 @@ export const uploadToCloudinary = async (file: File, preset: string) => {
         body: formData,
       }
     );
-
-    if (!response.ok) {
-      throw new Error("Failed to upload image");
-    }
 
     const data = await response.json();
     return data.secure_url;

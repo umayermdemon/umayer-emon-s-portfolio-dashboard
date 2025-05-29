@@ -1,7 +1,9 @@
+import CreateSkillPage from "@/components/Skills/CreateSkill";
+
 const CreateSkill = () => {
   return (
-    <div>
-      <h1>This is CreateSkill component</h1>
+    <div className="w-full">
+      <CreateSkillPage />
     </div>
   );
 };
