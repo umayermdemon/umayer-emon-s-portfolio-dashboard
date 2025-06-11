@@ -16,7 +16,7 @@ export const middleware = async (request: NextRequest) => {
           request.url
         )
         // new URL(
-        //   `https://umayer-emon-s-portfolio-dashboard-nextjs.vercel.app/login?redirectPath=${pathname}`,
+        //   `https://umayermdemondashboard.vercel.app/login?redirectPath=${pathname}`,
         //   request.url
         // )
       );

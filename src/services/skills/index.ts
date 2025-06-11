@@ -16,6 +16,21 @@ export const getAllSkills = async () => {
     throw new Error(`Error fetching skills: ${error}`);
   }
 };
+export const getSingleSkills = async (id: string) => {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/skills/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: (await cookies()).get("accessToken")!.value,
+      },
+      next: { tags: ["skills"] },
+    });
+
+    return res.json();
+  } catch (error) {
+    throw new Error(`Error fetching skills: ${error}`);
+  }
+};
 
 export const createSkill = async (skillData: FieldValues) => {
   try {
@@ -58,6 +73,27 @@ export const updateSkill = async (skillId: string, skillData: FieldValues) => {
     return res.json();
   } catch (error) {
     throw new Error(`Error updating skill: ${error}`);
+  }
+};
+
+export const softDeleteSkill = async (skillId: string) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/skills/${skillId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: (await cookies()).get("accessToken")!.value,
+        },
+        body: JSON.stringify({ isDeleted: true }),
+      }
+    );
+
+    revalidateTag("skills");
+
+    return res.json();
+  } catch (error) {
+    throw new Error(`Error soft deleting skill: ${error}`);
   }
 };
 

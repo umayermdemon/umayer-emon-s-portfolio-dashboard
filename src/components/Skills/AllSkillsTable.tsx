@@ -9,7 +9,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { toast } from "sonner";
 import DeleteConfirmationModal from "../shared/deleteConfirmationModal";
-import { deleteSkill } from "@/services/skills";
+import {
+  deleteSkill,
+  getSingleSkills,
+  softDeleteSkill,
+} from "@/services/skills";
 
 const AllSkillsTable = ({ skills }: { skills: ISkill[] }) => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -23,13 +27,17 @@ const AllSkillsTable = ({ skills }: { skills: ISkill[] }) => {
   const handleDeleteConfirm = async () => {
     try {
       if (selectedId) {
-        const res = await deleteSkill(selectedId);
-        if (res?.success) {
+        const { data } = await getSingleSkills(selectedId);
+        if (data?.isDeleted === true) {
+          const res = await deleteSkill(selectedId);
           toast.success(res?.message);
           setModalOpen(false);
         } else {
-          toast.error(res?.message);
+          const res = await softDeleteSkill(selectedId);
+          toast.success(res?.message);
+          setModalOpen(false);
         }
+        // toast.error("This skill is not deleted");
       }
     } catch (err: any) {
       toast.error(err?.message);

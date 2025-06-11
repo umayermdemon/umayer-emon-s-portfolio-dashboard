@@ -56,7 +56,7 @@ export default function CreateSkillPage() {
         setImagePreview([]);
         toast.success(res?.message);
       } else {
-        toast.error(res?.message);
+        toast.error(res?.errorSources?.[0]?.message);
       }
     } catch (error) {
       console.error("Error creating skill:", error);
@@ -104,7 +104,7 @@ export default function CreateSkillPage() {
                 <textarea
                   {...field}
                   className="w-full mt-1 bg-[#0A192F] text-white border border-[#233554] rounded-md px-3 py-2 focus:outline-none focus:border-[#00BFFF] focus:ring-2 focus:ring-[#00BFFF]"
-                  placeholder="Enter project description"
+                  placeholder="Enter skill description"
                   rows={4}
                 />
               )}

@@ -3,7 +3,7 @@ import { getAllSkills } from "@/services/skills";
 
 const AllSkills = async () => {
   const res = await getAllSkills();
-  const skills = res.data;
+  const skills = res?.data;
   return (
     <div className="w-full p-4">
       <div className="border-b-2 border-gray-700 pb-4 my-4 text-center">
