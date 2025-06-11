@@ -55,85 +55,105 @@ const AllBlogsTable = ({ blogs }: { blogs: IBlog[] }) => {
     },
     {
       accessorKey: "author",
-      header: () => <div>Author</div>,
-      cell: ({ row }) => <div>{row.original.author}</div>,
+      header: () => <div className="text-center">Author</div>,
+      cell: ({ row }) => (
+        <div className="text-center">{row.original.author}</div>
+      ),
     },
     {
       accessorKey: "category",
-      header: () => <div>Category</div>,
-      cell: ({ row }) => <div>{row.original.category}</div>,
+      header: () => <div className="text-center">Category</div>,
+      cell: ({ row }) => (
+        <div className="text-center">{row.original.category}</div>
+      ),
     },
     {
       accessorKey: "views",
-      header: () => <div>Views</div>,
-      cell: ({ row }) => <div>{row.original.views}</div>,
+      header: () => <div className="text-center">Views</div>,
+      cell: ({ row }) => (
+        <div className="text-center">{row.original.views}</div>
+      ),
     },
     {
       accessorKey: "featured",
-      header: () => <div>Featured</div>,
+      header: () => <div className="text-center">Featured</div>,
       cell: ({ row }) => (
-        <input
-          type="checkbox"
-          checked={row.original.featured}
-          readOnly
-          className="cursor-not-allowed"
-        />
+        <div className="text-center">
+          <input
+            type="checkbox"
+            checked={row.original.featured}
+            readOnly
+            className="cursor-not-allowed"
+          />
+        </div>
       ),
     },
     {
       accessorKey: "isDeleted",
-      header: () => <div>Deleted</div>,
+      header: () => <div className="text-center">Deleted</div>,
       cell: ({ row }) => (
-        <input
-          type="checkbox"
-          checked={row.original.isDeleted}
-          readOnly
-          className="cursor-not-allowed"
-        />
+        <div className="text-center">
+          <input
+            type="checkbox"
+            checked={row.original.isDeleted}
+            readOnly
+            className="cursor-not-allowed"
+          />
+        </div>
       ),
     },
     {
       accessorKey: "likes",
-      header: () => <div>Likes</div>,
-      cell: ({ row }) => <div>{row.original.likes}</div>,
+      header: () => <div className="text-center">Likes</div>,
+      cell: ({ row }) => (
+        <div className="text-center">{row.original.likes}</div>
+      ),
     },
     {
       accessorKey: "commentsCount",
-      header: () => <div>Comments</div>,
-      cell: ({ row }) => <div>{row.original.commentsCount}</div>,
+      header: () => <div className="text-center">Comments</div>,
+      cell: ({ row }) => (
+        <div className="text-center">{row.original.commentsCount}</div>
+      ),
     },
     {
       accessorKey: "published",
-      header: () => <div>Published</div>,
+      header: () => <div className="text-center">Published</div>,
       cell: ({ row }) => (
-        <input
-          type="checkbox"
-          checked={row.original.published}
-          readOnly
-          className="cursor-not-allowed"
-        />
+        <div className="text-center">
+          <input
+            type="checkbox"
+            checked={row.original.published}
+            readOnly
+            className="cursor-not-allowed"
+          />
+        </div>
       ),
     },
     {
       accessorKey: "createdAt",
-      header: () => <div>Created At</div>,
+      header: () => <div className="text-center">Created At</div>,
       cell: ({ row }) => (
-        <div>{new Date(row.original.createdAt).toLocaleDateString()}</div>
+        <div className="text-center">
+          {new Date(row.original.createdAt).toLocaleDateString()}
+        </div>
       ),
     },
     {
       accessorKey: "updatedAt",
-      header: () => <div>Updated At</div>,
+      header: () => <div className="text-center">Updated At</div>,
       cell: ({ row }) => (
-        <div>{new Date(row.original.updatedAt).toLocaleDateString()}</div>
+        <div className="text-center">
+          {new Date(row.original.updatedAt).toLocaleDateString()}
+        </div>
       ),
     },
 
     {
       accessorKey: "action",
-      header: () => <div>Action</div>,
+      header: () => <div className="text-center">Action</div>,
       cell: ({ row }) => (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-center space-x-2">
           <button
             onClick={() => alert("Edit blog")}
             className="text-blue-500 hover:text-blue-700 cursor-pointer">
@@ -150,7 +170,7 @@ const AllBlogsTable = ({ blogs }: { blogs: IBlog[] }) => {
   ];
 
   return (
-    <div className="w-full bg-gray-300 rounded-md shadow-md p-4">
+    <div className="w-full text-white rounded-md shadow-md p-4">
       <PTable columns={columns} data={blogs} />
       <DeleteConfirmationModal
         name={selectedItem}

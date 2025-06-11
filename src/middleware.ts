@@ -11,14 +11,14 @@ export const middleware = async (request: NextRequest) => {
       return NextResponse.next();
     } else {
       return NextResponse.redirect(
-        new URL(
-          `http://localhost:3001/login?redirectPath=${pathname}`,
-          request.url
-        )
         // new URL(
-        //   `https://umayermdemondashboard.vercel.app/login?redirectPath=${pathname}`,
+        //   `http://localhost:3001/login?redirectPath=${pathname}`,
         //   request.url
         // )
+        new URL(
+          `https://umayermdemondashboard.vercel.app/login?redirectPath=${pathname}`,
+          request.url
+        )
       );
     }
   }

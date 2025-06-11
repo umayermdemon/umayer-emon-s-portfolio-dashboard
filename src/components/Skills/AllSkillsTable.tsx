@@ -111,7 +111,7 @@ const AllSkillsTable = ({ skills }: { skills: ISkill[] }) => {
   ];
 
   return (
-    <div className="w-full bg-gray-300 rounded-md shadow-md p-4">
+    <div className="w-full  text-white rounded-md shadow-md p-4">
       <PTable columns={columns} data={skills} />
       <DeleteConfirmationModal
         name={selectedItem}
