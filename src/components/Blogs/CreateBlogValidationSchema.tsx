@@ -9,6 +9,5 @@ export const CreateBlogValidationSchema = z.object({
   tags: z.array(z.string()).min(1, "At least one tag is required"),
   category: z.string().min(1, "Category is required").optional(),
   published: z.boolean().default(false).optional(),
-  description: z.string().min(1, "Description is required"),
   featured: z.boolean().default(false).optional(),
 });

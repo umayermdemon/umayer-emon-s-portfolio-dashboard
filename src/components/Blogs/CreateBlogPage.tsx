@@ -17,7 +17,6 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateBlogValidationSchema } from "./CreateBlogValidationSchema";
 import ImageUploader from "../ui/core/ImageUploader";
 import ImagePreviewer from "../ui/core/ImageUploader/ImagePreviewer";
@@ -25,27 +24,17 @@ import { z } from "zod";
 import { uploadImageToCloudinary } from "../shared/uploadImageToCloudinary";
 import { createBlog } from "@/services/blogs";
 import { toast } from "sonner";
+import TextEditor from "../ui/core/BlogTextEditor/TextEditor";
 type FormSchema = z.infer<typeof CreateBlogValidationSchema>;
 export default function CreateBlogPage() {
+  const [content, setContent] = useState<string>("");
   const [tagsInput, setTagsInput] = useState("");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string[]>([]);
-  const form = useForm<FormSchema>({
-    resolver: zodResolver(CreateBlogValidationSchema),
-    defaultValues: {
-      title: "",
-      slug: "",
-      content: "",
-      summary: "",
-      tags: [],
-      description: "",
-      featured: false,
-      published: false,
-    },
-  });
+  const form = useForm<FormSchema>();
   const {
     reset,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = form;
 
   const onSubmit: SubmitHandler<FormSchema> = async (data) => {
@@ -55,12 +44,14 @@ export default function CreateBlogPage() {
         ...data,
         author: "Umayer Emon",
         coverImage: imageUrls,
+        content,
       };
       if (!imageFiles.length) {
         toast.error("Please upload a cover image.");
         return;
       } else {
         const res = await createBlog(blogData);
+        console.log(res);
 
         if (res?.success) {
           reset();
@@ -109,70 +100,13 @@ export default function CreateBlogPage() {
                 )}
               />
             </div>
-            <div className="flex-1">
-              <FormField
-                control={form.control}
-                name="slug"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold text-[#00BFFF]">
-                      Slug
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value || ""}
-                        className="bg-[#0A192F] rounded-xl text-white border-[#233554] focus:border-[#00BFFF] focus:ring-[#00BFFF]"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
           </div>
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold text-[#00BFFF]">
-                      Content
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value || ""}
-                        className="bg-[#0A192F] rounded-xl text-white border-[#233554] focus:border-[#00BFFF] focus:ring-[#00BFFF]"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex-1">
-              <FormField
-                control={form.control}
-                name="summary"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold text-[#00BFFF]">
-                      Summary
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value || ""}
-                        className="bg-[#0A192F] rounded-xl text-white border-[#233554] focus:border-[#00BFFF] focus:ring-[#00BFFF]"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <label className="text-center text-lg font-semibold text-white mb-6">
+                Content
+              </label>
+              <TextEditor content={content} onChange={setContent} />
             </div>
           </div>
 
@@ -235,27 +169,7 @@ export default function CreateBlogPage() {
               />
             </div>
           </div>
-          <div>
-            <Label className="text-[#00BFFF]">Description</Label>
-            <Controller
-              control={form.control}
-              name="description"
-              rules={{ required: true }}
-              render={({ field }) => (
-                <textarea
-                  {...field}
-                  className="w-full mt-1 bg-[#0A192F] text-white border border-[#233554] rounded-md px-3 py-2 focus:outline-none focus:border-[#00BFFF] focus:ring-2 focus:ring-[#00BFFF]"
-                  placeholder="Enter project description"
-                  rows={4}
-                />
-              )}
-            />
-            {errors.description && (
-              <span className="text-destructive text-sm">
-                Description is required
-              </span>
-            )}
-          </div>
+
           <div className="flex flex-col items-center md:flex-row md:justify-between gap-4">
             <div className="flex flex-row gap-4 items-center">
               {imageFiles.length === 1 ? (

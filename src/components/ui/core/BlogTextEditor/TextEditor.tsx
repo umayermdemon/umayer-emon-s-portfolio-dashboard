@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEditor, EditorContent } from "@tiptap/react";
@@ -5,7 +6,13 @@ import StarterKit from "@tiptap/starter-kit";
 import MenuBar from "./MenuBar";
 import TextAlign from "@tiptap/extension-text-align";
 
-const TextEditor = () => {
+const TextEditor = ({
+  content,
+  onChange,
+}: {
+  content: string;
+  onChange: any;
+}) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -24,12 +31,15 @@ const TextEditor = () => {
         types: ["heading", "paragraph"],
       }),
     ],
-    content: "<p>Hello World! 🌎️</p>",
+    content: content,
     editorProps: {
       attributes: {
         class:
           "bg-white border border-[#233554] rounded-md px-3 py-2 min-h-[150px] container mx-auto",
       },
+    },
+    onUpdate: ({ editor }) => {
+      onChange(editor.getHTML());
     },
   });
 
