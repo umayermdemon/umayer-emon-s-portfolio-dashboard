@@ -104,7 +104,7 @@ const AllProjectsTable = ({ projects }: { projects: IProject[] }) => {
   ];
 
   return (
-    <div className="w-full bg-gray-300 rounded-md shadow-md p-4">
+    <div className="w-full text-white rounded-md shadow-md p-4">
       <PTable columns={columns} data={projects} />
       <DeleteConfirmationModal
         name={selectedItem}
