@@ -3,7 +3,7 @@
 import CreateBlogPage from "@/components/Blogs/CreateBlogPage";
 const CreateBlog = () => {
   return (
-    <div className="w-full min-h-screen py-10">
+    <div className="w-full">
       <CreateBlogPage />
     </div>
   );

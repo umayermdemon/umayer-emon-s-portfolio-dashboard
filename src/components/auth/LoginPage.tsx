@@ -83,7 +83,7 @@ const LoginPage = () => {
           <Button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors cursor-pointer">
-            {isSubmitting ? "Logging...." : "Login"}
+            {isSubmitting ? "Logging in...." : "Login"}
           </Button>
         </form>
       </Form>

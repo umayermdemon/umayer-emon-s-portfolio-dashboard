@@ -12,6 +12,7 @@ import Blockquote from "@tiptap/extension-blockquote";
 import Image from "@tiptap/extension-image";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import TextStyle from "@tiptap/extension-text-style";
+import { useEffect } from "react";
 
 const CustomImage = Image.extend({
   addAttributes() {
@@ -64,7 +65,7 @@ const TextEditor = ({
       }),
       CodeBlock.configure({
         HTMLAttributes: {
-          class: "bg-[#0D0D0D] text-white rounded-md px-2 py-1 font-mono w-1/3",
+          class: "bg-black text-white rounded-md px-2 py-1 font-mono w-1/3",
         },
       }),
       Blockquote.configure({
@@ -85,13 +86,19 @@ const TextEditor = ({
     editorProps: {
       attributes: {
         class:
-          "bg-white border border-[#233554] rounded-md px-3 py-2 h-[450px] container mx-auto overflow-y-auto",
+          "bg-[0f172a] border text-white border-2 border-white rounded-md px-3 py-2 h-[360px] container mx-auto overflow-y-auto",
       },
     },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
   });
+
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content || "", false);
+    }
+  }, [content, editor]);
 
   return (
     <div>

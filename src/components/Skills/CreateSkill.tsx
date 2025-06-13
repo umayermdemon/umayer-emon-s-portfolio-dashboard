@@ -119,7 +119,7 @@ export default function CreateSkillPage() {
             <div className="flex flex-row gap-4 items-center">
               {imageFiles.length === 1 ? (
                 <ImagePreviewer
-                  imagePreview={imagePreview.slice(0, 4)}
+                  imagePreview={imagePreview}
                   setImageFiles={setImageFiles}
                   setImagePreview={setImagePreview}
                   className="flex flex-row gap-4 items-center"
