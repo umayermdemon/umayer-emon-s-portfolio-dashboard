@@ -5,6 +5,29 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import MenuBar from "./MenuBar";
 import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
+import Color from "@tiptap/extension-color";
+import CodeBlock from "@tiptap/extension-code-block";
+import Blockquote from "@tiptap/extension-blockquote";
+import Image from "@tiptap/extension-image";
+import HorizontalRule from "@tiptap/extension-horizontal-rule";
+import TextStyle from "@tiptap/extension-text-style";
+
+const CustomImage = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      style: {
+        default: null,
+        parseHTML: (element) => element.getAttribute("style"),
+        renderHTML: (attributes) => {
+          if (!attributes.style) return {};
+          return { style: attributes.style };
+        },
+      },
+    };
+  },
+});
 
 const TextEditor = ({
   content,
@@ -30,12 +53,39 @@ const TextEditor = ({
       TextAlign.configure({
         types: ["heading", "paragraph"],
       }),
+      Underline.configure({
+        HTMLAttributes: {
+          class: "underline",
+        },
+      }),
+      TextStyle,
+      Color.configure({
+        types: ["textStyle"],
+      }),
+      CodeBlock.configure({
+        HTMLAttributes: {
+          class: "bg-[#0D0D0D] text-white rounded-md px-2 py-1 font-mono w-1/3",
+        },
+      }),
+      Blockquote.configure({
+        HTMLAttributes: {
+          class: "border-l-4 border-gray-200 pl-2",
+        },
+      }),
+      CustomImage.configure({
+        inline: true,
+      }),
+      HorizontalRule.configure({
+        HTMLAttributes: {
+          class: "border-b border-gray-300 my-4",
+        },
+      }),
     ],
     content: content,
     editorProps: {
       attributes: {
         class:
-          "bg-white border border-[#233554] rounded-md px-3 py-2 min-h-[150px] container mx-auto",
+          "bg-white border border-[#233554] rounded-md px-3 py-2 h-[450px] container mx-auto overflow-y-auto",
       },
     },
     onUpdate: ({ editor }) => {

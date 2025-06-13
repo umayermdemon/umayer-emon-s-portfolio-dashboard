@@ -28,7 +28,6 @@ import TextEditor from "../ui/core/BlogTextEditor/TextEditor";
 type FormSchema = z.infer<typeof CreateBlogValidationSchema>;
 export default function CreateBlogPage() {
   const [content, setContent] = useState<string>("");
-  const [tagsInput, setTagsInput] = useState("");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string[]>([]);
   const form = useForm<FormSchema>();
@@ -57,7 +56,6 @@ export default function CreateBlogPage() {
           reset();
           setImageFiles([]);
           setImagePreview([]);
-          setTagsInput("");
           toast.success(res?.message);
         } else {
           toast.error(res?.message);
@@ -103,73 +101,12 @@ export default function CreateBlogPage() {
           </div>
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <label className="text-center text-lg font-semibold text-white mb-6">
+              <FormLabel className="font-bold text-[#00BFFF] mb-2">
                 Content
-              </label>
+              </FormLabel>
               <TextEditor content={content} onChange={setContent} />
             </div>
           </div>
-
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <FormField
-                control={form.control}
-                name="tags"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[#00BFFF]">
-                      Tags (comma separated)
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        className="mt-1 bg-[#0A192F] text-white border-[#233554] focus:border-[#00BFFF] focus:ring-[#00BFFF]"
-                        value={tagsInput}
-                        onChange={(e) => {
-                          setTagsInput(e.target.value);
-                          // Optionally update form value live as user types
-                          const techs = e.target.value
-                            .split(",")
-                            .map((t) => t.trim())
-                            .filter(Boolean);
-                          field.onChange(techs);
-                        }}
-                        onBlur={() => {
-                          const techs = tagsInput
-                            .split(",")
-                            .map((t) => t.trim())
-                            .filter(Boolean);
-                          field.onChange(techs);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex-1">
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-bold text-[#00BFFF]">
-                      Category
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value || ""}
-                        className="bg-[#0A192F] rounded-xl text-white border-[#233554] focus:border-[#00BFFF] focus:ring-[#00BFFF]"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-
           <div className="flex flex-col items-center md:flex-row md:justify-between gap-4">
             <div className="flex flex-row gap-4 items-center">
               {imageFiles.length === 1 ? (
